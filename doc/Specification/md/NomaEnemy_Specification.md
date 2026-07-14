@@ -10,24 +10,28 @@
 ## 基本パラメータ（初期設定）
 pop関数及びstart関数で設定される、自機の基本性能を記載します
 ### 初期位置
-- 通常ステージとボスステージの2パターンある。
-- 通常ステージ（NOMAL_STAGE） pop関数の引数で指定： 画面外上部2箇所
-  - 左側（ENEMY_POP_LEFT_POSITION, ENEMY_POP_Y）（160,0）
-  - 右側（ENEMY_POP_RIGHT_POSITION, ENEMY_POP_Y）（480,0）
 
-- ボスステージ(BOSS_STAGE)  pop関数の引数で指定：画面外上部2箇所
-  - 左側（SUMMON_LEFT_NOMAL_ENEMY_X, SUMMON_ENEMY_Y）（10,0）
-  - 右側（SUMMON_RIGHT_NOMAL_ENEMY_X, SUMMON_ENEMY_Y）（580,0）
+| ステージ | 出現位置 | 使用定数 | 座標 (X, Y) |
+|----------|----------|----------|------------|
+| 通常ステージ（NOMAL_STAGE） | 左側（画面外上部） | ENEMY_POP_LEFT_POSITION, ENEMY_POP_Y | (160, 0) |
+| 通常ステージ（NOMAL_STAGE） | 右側（画面外上部） | ENEMY_POP_RIGHT_POSITION, ENEMY_POP_Y | (480, 0) |
+| ボスステージ（BOSS_STAGE） | 左側（画面外上部） | SUMMON_LEFT_NOMAL_ENEMY_X, SUMMON_ENEMY_Y| (10, 0) |
+| ボスステージ（BOSS_STAGE） | 右側（画面外上部） | SUMMON_RIGHT_NOMAL_ENEMY_X, SUMMON_ENEMY_Y | (580, 0) |
+
 ### 当たり判定サイズ
 - 画像サイズ（64x48）と同じ。
 - 常に一定。
 ### 移動速度
-- （ENEMY_VECTOR_X）（1）X軸；1フレームで1ピクセル移動　
-- （ENEMY_VECTOR_Y）（6.5）y軸：1フレームで6.5ピクセル移動
-- 更新処理によって値は加減します。
+| 項目 | 使用定数 | 値 | 備考 |
+|------|----------|:--:|------|
+| 初期移動速度（X軸） | `ENEMY_VECTOR_X` | `1.0` | 出現から規定高度までの降下時に使用 |
+| 初期移動速度（Y軸） | `ENEMY_VECTOR_Y` | `6.5` | 出現から規定高度までの降下時に使用 |
 ### 初期ライフ
-通常ステージ（NOMAL_STAGE）：(ENEMY_MAX_HP：30)
-ボスステージ（BOSS_STAGE）：(ENEMY_MAX_HP_BOSS_STAGE：60)
+
+| ステージ | 使用定数 | 初期ライフ |
+|----------|----------|:----------:|
+| 通常ステージ（NOMAL_STAGE） | `ENEMY_MAX_HP` | 30 |
+| ボスステージ（BOSS_STAGE） | `ENEMY_MAX_HP_BOSS_STAGE` | 60 |
 ## 移動仕様
 ### 移動パターン
 ステージによって2種類の移動パターンがあります
@@ -46,6 +50,18 @@ pop関数及びstart関数で設定される、自機の基本性能を記載し
 #### 指定位置への移動ロジック
 - 指定位置への移動には atan2() を用いて移動角度を算出する
 - 算出した角度から cos()・sin() を利用して速度ベクトルを求める
+
+#### 退場移動
+- 出現からの経過フレーム数（mMoveCount）が 250フレーム（ENEMY_EXIT_START_FRAME）に達した瞬間に、退場移動へ移行する
+- 退場開始時に速度ベクトルが設定されます
+
+| 出現位置 | 退場時速度(x,y) | 退場方向 |
+| ------ | ------ | ------ |
+|左側（SUMMON_LEFT）|(-ENEMY_EXIT_SPD,-ENEMY_EXIT_SPD)=(-1,-1)|左上方向に脱出|
+|右側（SUMMON_RIGHT）|(ENEMY_EXIT_SPD,-ENEMY_EXIT_SPD)=(1,-1)|右上方向に脱出|
+- 退場中ではy軸速度ベクトルに加速処理が行われます。毎フレーム（ENEMY_SPEEDUP_Y：1.08）乗算されます。
+- 退場中は攻撃を停止させるため、mShotCount を常に 0 に固定
+
 
 ## 攻撃仕様
 - 攻撃パターンは1種類のみ。
@@ -93,7 +109,7 @@ pop関数及びstart関数で設定される、自機の基本性能を記載し
  - スコア加算: ヒットスコア（HIT_SCORE:300）が現在のスコアに加算
  - HP減算: 現在のHP（mHitPoint）からダメージ量（ENEMY_TAKE_DAMAGE:5）減算
  - クールダウン開始: ダメージフラグ mIsDamageCoolDown を true
-###　表示処理
+### 表示処理
  - ヒットエフェクト: 敵の中心座標（mX, mY）にヒットエフェクト（HIT_EF）を表示。
  - ダメージ画像の表示: mIsDamageCoolDown が true の間は、ダメージ用の画像(青色の色違い画像)が描画
  - 表示時間: ダメージ画像の表示は DAMAGE_COUNT_LIMIT（2フレーム）の間のみ。この値を超えると通常状態へ戻る。
@@ -124,7 +140,7 @@ pop関数及びstart関数で設定される、自機の基本性能を記載し
 
 ## 補足・テクニカル事項
 ### 引数管理の構造体化
-action 関数の引数が肥大化するのを防ぐため、必要なマネージャークラスのポインタをまとめた EnemyActionData 構造体を仕様している。
+action 関数の引数が肥大化するのを防ぐため、必要なマネージャークラスのポインタをまとめた EnemyActionData 構造体を使用している。
 ### オーバーフロー対策
 移動制御に用いる mMoveCount が、型（int）の最大値付近である MOVE_COUNT_LIMIT (2,147,483,646) に達した場合、0にリセットしてオーバーフローを防止する
 ### メモリ管理
