@@ -45,20 +45,20 @@ pop関数及びstart関数で設定される、自機の基本性能を記載し
 ### 実行内容
 
 - **有効化**
-  - `mIsActive` を `true` に設定し、更新（`action()`）および描画（`draw()`）の対象とする。
+  - `mActive` を `true` に設定し、更新（`action()`）および描画（`draw()`）の対象とする。
 - **撃破状態のリセット**
-  - `mIsDefeat` を `false` に設定する。
+  - `mDefeat` を `false` に設定する。
 - **座標・個体番号の設定**
   - 引数で指定された座標（`popPositionX`、`popPositionY`）を設定する。
   - 個体判別番号（`mNumber`）を設定する。
 
 ### ステージ別の初期化
 
-| 設定項目 | 通常ステージ（`isBossStage = false`） | ボスステージ（`isBossStage = true`） |
+| 設定項目 | 通常ステージ（`BossStage = false`） | ボスステージ（`BossStage = true`） |
 |----------|---------------------------------------|--------------------------------------|
 | 初期ライフ | `ENEMY_MAX_HP`（30） | `ENEMY_MAX_HP_BOSS_STAGE`（60） |
 | 開始カウント | `0`（コンストラクタ等の初期値） | `BOSS_STAGE_START_COUNT`（10） |
-| 対象フラグ | `mIsBossStage = false` | `mIsBossStage = true` |
+| 対象フラグ | `mBossStage = false` | `mBossStage = true` |
 
 ### 初期化の補足
 
@@ -138,19 +138,19 @@ pop関数及びstart関数で設定される、自機の基本性能を記載し
 
 ## ダメージ処理
 ### 実行トリガー
-- 外部（弾）の当たり判定処理によってダメージフラグ mIsTakeDamage が true に設定された場合にのみ処理が実行
+- 外部（弾）の当たり判定処理によってダメージフラグ mTakeDamage が true に設定された場合にのみ処理が実行
 - 毎フレームの更新処理（action 関数）内で呼び出し
 ### 無敵・クールダウン判定
 - 次の条件の場合ダメージ処理は行われない
-  - 無敵フラグ（mIsInvincible）が true
-  - ダメージ表示中（mIsDamageCoolDown）がtrue
+  - 無敵フラグ（mInvincible）が true
+  - ダメージ表示中（mDamageCoolDown）がtrue
 ### 内部処理
  - スコア加算: ヒットスコア（HIT_SCORE:300）が現在のスコアに加算
  - HP減算: 現在のHP（mHitPoint）からダメージ量（ENEMY_TAKE_DAMAGE:5）減算
  - クールダウン開始: ダメージフラグ mIsDamageCoolDown を true
 ### 表示処理
  - ヒットエフェクト: 敵の中心座標（mX, mY）にヒットエフェクト（HIT_EF）を表示。
- - ダメージ画像の表示: mIsDamageCoolDown が true の間は、ダメージ用の画像(青色の色違い画像)が描画
+ - ダメージ画像の表示: mDamageCoolDown が true の間は、ダメージ用の画像(青色の色違い画像)が描画
  - 表示時間: ダメージ画像の表示は DAMAGE_COUNT_LIMIT（2フレーム）の間のみ。この値を超えると通常状態へ戻る。
  - 被弾時用更新処理：ダメージ中は mDamageDisplayCount を毎フレームカウントアップし、規定フレーム（2フレーム）を超えた瞬間に、カウントをリセット
 ### 撃破判定
@@ -158,7 +158,7 @@ pop関数及びstart関数で設定される、自機の基本性能を記載し
 - 判定条件：敵のHP（mHitPoint）が 0以下 になった際に撃破とする
 ### 撃破処理
 撃破判定が成立すると、以下の処理を実行する
-- フラグ更新: 撃破フラグ（mIsDefeat）を true にし、生存フラグ（mIsActive）を false にしてオブジェクトを無効化
+- フラグ更新: 撃破フラグ（mDefeat）を true にし、生存フラグ（mActive）を false にしてオブジェクトを無効化
 - 撃破スコア加算: 敵撃破スコア（ENEMY_SCORE:1000）が加算
 - 撃破演出：撃破SEと撃破用爆発エフェクト(EXPLOSION_E)を再生
 - アイテムドロップ: アイテム管理クラス（ItemObjectManager）を通じて、以下の3種類のアイテムをドロップ
@@ -169,13 +169,13 @@ pop関数及びstart関数で設定される、自機の基本性能を記載し
 ---
 
 ## 表示(描画仕様)
-- 実行条件: 敵が有効状態（mIsActive == true）である場合のみ描画処理を実行
+- 実行条件: 敵が有効状態（mActive == true）である場合のみ描画処理を実行
 - 描画座標: 敵の中心座標（mX, mY）を基準とする。画像を描画する際は、画像の幅・高さの半分（mWidth / 2, mHeight / 2）を差し引いた座標を計算して描画
 - ダメージの更新ロジックはダメージ処理項目で記載。
 
 ### 表示要素
 - 通常画像：ダメージ以外の時に表示する敵画像（赤色）
-- ダメージ画像：被弾時用色違いの敵画像（青色）。被弾後、mIsDamageCoolDown が true の間表示
+- ダメージ画像：被弾時用色違いの敵画像（青色）。被弾後、mDamageCoolDown が true の間表示
 ### 描画補足（描画順序）
 - レイヤー順: GameMainScene の draw 関数において、背景動画の後に描画されること。また、敵の後に弾を描画すること。ゲームプレイする上で弾の方が重要度が高いため。
 
