@@ -46,7 +46,7 @@
 - [通常敵 : NomalEnemy_Specification.md](NomalEnemy_Specification.md)
 - [追従敵 : TraceEnemy_Specification.md](TraceEnemy_Specification.md)
 - [チャージ敵 : ChargeEnemy_Specification.md](ChargeEnemy_Specification.md)
-- ボス敵
+- [ボス敵 : BossEnemy_Specification.md](BossEnemy_Specification.md)
 
 #### アイテム
 - アイテム
@@ -158,6 +158,7 @@
 - 敵の弾に被弾するとＨＰが1つ減ります。
 - ＨＰが0になるとゲームオーバーとなります。
 - 無敵アイテムを拾うことで一定時間ダメージを防ぐこともできます。
+- 敵と直接衝突してもダメージは受けません。
 
 
 #### 強化
@@ -183,9 +184,10 @@
 - プレイヤー狙い撃ちで避けを意識させる役割があります。
 - [チャージ敵 : ChargeEnemy_Specification.md](ChargeEnemy_Specification.md)
 #### ボス敵
-- HPが多く、移動と攻撃がHP割合によって変化します。
 - ゲームの最終目標であり倒すとゲームクリアです。
+- 雑魚敵よりも巨大でHPがとても多く、移動と攻撃がHP割合によって変化します。
 - ボスのHPバーがボスステージでは表示されます。
+- [ボス敵 : BossEnemy_Specification.md](BossEnemy_Specification.md)
 
 #### 敵の出現
 敵はゲームの進行に合わせて時間経過で出現します。ステージによって出現する敵が変わります
