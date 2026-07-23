@@ -49,7 +49,7 @@
 - [ボス敵 : BossEnemy_Specification.md](BossEnemy_Specification.md)
 
 #### アイテム
-- アイテム
+- [アイテム : Item_Specification.md](Item_Specification.md)
 
 #### エフェクト
 - エフェクト
@@ -142,10 +142,11 @@
 - [ゲームシーン : GameScene_Specification.md](GameScene_Specification.md)
 
 ### アイテム
-
+プレイヤー機に様々な効果を与え、ゲームプレイを補助するものです。
 - 敵を撃破するとアイテムをドロップします。
 - 経験値と回復と無敵のアイテムがあります。
-- アイテムに近づいて取得することでそれぞれ効果を発揮します。
+- 取得することでそれぞれ効果を発揮します。
+- [アイテム : Item_Specification.md](Item_Specification.md)
 
 ### プレイヤー
  プレイヤーは青い自機を操作してゲームを進めていきます。攻撃と移動を操作することができます。
